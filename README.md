@@ -1,2 +1,2 @@
 # bookfinder
-Find book by phot of it's cover.
+Find book by photo of it's cover.
