@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'woz3ax8!x2(!xq0qmdw&br+_+3^yu0d#$9g2*5q)*d-j5d@oek'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -144,8 +144,7 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
-            'filters': ['require_debug_true'],
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
@@ -157,15 +156,23 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'propagate': True,
+            'level': 'DEBUG',
+            'propagate': False,
         },
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': False,
         },
+        # database errors
+        "django.db.backends": {
+            "handlers": ["mail_admins"],
+            "level": "ERROR",
+            "propagate": False,
+        },
         '': {
             'handlers': ['console'],
+            'level': 'DEBUG',
             'propagate': False,
         },
     }

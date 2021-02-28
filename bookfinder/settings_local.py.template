@@ -1,0 +1,17 @@
+from bookfinder.settings import *  # noqa
+
+DEBUG = True
+
+ALLOWED_HOSTS = ['*']
+
+# TODO fill it
+SECRET_KEY = ""
+
+# uncomment to see database queries
+# LOGGING['loggers']['django.db.backends']['level'] = 'DEBUG'
+
+LOGGING['loggers']['']['level'] = 'DEBUG'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+#EMAIL_FILE_PATH = '/home/flaim/www/startupdb/logs/'
