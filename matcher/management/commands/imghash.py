@@ -13,12 +13,12 @@ class Command(BaseCommand):
 
         example_image_path = os.path.join("bohaty_orez.jpg")
 
-        example_hash = imagehash.average_hash(Image.open(example_image_path))
+        example_hash = imagehash.dhash(Image.open(example_image_path))
         print(example_hash)
 
         for cover in BookCover.objects.exclude(image="")[:10]:
             print(cover, cover.book, cover.book.pk)
-            img_hash = imagehash.average_hash(Image.open(cover.image.path))
+            img_hash = imagehash.dhash(Image.open(cover.image.path))
             print(img_hash)
             print(example_hash - img_hash)
 
