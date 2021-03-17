@@ -9,10 +9,13 @@ asgiref==3.3.1
 attrs==20.3.0
     # via
     #   automat
+    #   pytest
     #   service-identity
     #   twisted
 automat==20.2.0
     # via twisted
+beautifulsoup4==4.9.3
+    # via -r requirements.in
 certifi==2020.12.5
     # via requests
 cffi==1.14.5
@@ -44,6 +47,10 @@ imagehash==4.2.0
     # via -r requirements.in
 incremental==17.5.0
     # via twisted
+iniconfig==1.1.1
+    # via pytest
+isbnlib==3.10.6
+    # via -r requirements.in
 itemadapter==0.2.0
     # via
     #   itemloaders
@@ -64,6 +71,8 @@ numpy==1.20.1
     #   scipy
 opencv-python==4.5.1.48
     # via -r requirements.in
+packaging==20.9
+    # via pytest
 parsel==1.6.0
     # via
     #   itemloaders
@@ -74,8 +83,12 @@ pillow==8.1.0
     #   imagehash
 pip-tools==5.5.0
     # via -r requirements.in
+pluggy==0.13.1
+    # via pytest
 protego==0.1.16
     # via scrapy
+py==1.10.0
+    # via pytest
 pyasn1-modules==0.2.8
     # via service-identity
 pyasn1==0.4.8
@@ -88,6 +101,14 @@ pydispatcher==2.0.5
     # via scrapy
 pyopenssl==20.0.1
     # via scrapy
+pyparsing==2.4.7
+    # via packaging
+pytest-django==4.1.0
+    # via -r requirements.in
+pytest==6.2.2
+    # via
+    #   -r requirements.in
+    #   pytest-django
 pytz==2021.1
     # via django
 pywavelets==1.1.1
@@ -110,8 +131,12 @@ six==1.15.0
     #   protego
     #   pyopenssl
     #   w3lib
+soupsieve==2.2
+    # via beautifulsoup4
 sqlparse==0.4.1
     # via django
+toml==0.10.2
+    # via pytest
 twisted==21.2.0
     # via scrapy
 urllib3==1.26.3
