@@ -12,7 +12,7 @@ import sys
 import django
 
 sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".."))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'bookfinder.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'bookfinder.settings_local'
 
 django.setup()
 BOT_NAME = 'scraper'
@@ -55,6 +55,9 @@ ROBOTSTXT_OBEY = False
 #SPIDER_MIDDLEWARES = {
 #    'scraper.middlewares.ScraperSpiderMiddleware': 543,
 #}
+
+RETRY_ENABLED = True
+RETRY_TIMES = 3
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html

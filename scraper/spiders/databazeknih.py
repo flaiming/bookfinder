@@ -16,12 +16,17 @@ class DatabazeknihSpider(scrapy.Spider):
 
     def parse_list(self, response):
         for img_elem in response.css("img.inahled4"):
-            yield dict(
-                img=img_elem.attrib["src"],
-                name=img_elem.attrib["title"],
-                url=img_elem.xpath("parent::a").attrib["href"],
-                author=img_elem.xpath("parent::a/following-sibling::span/text()").extract_first(),
-            )
+            img = img_elem.attrib["src"]
+            if "/empty_n.jpg" in img:
+                print("Empty image!")
+                yield {}
+            else:
+                yield dict(
+                    cover=img,
+                    name=img_elem.attrib["title"],
+                    url=img_elem.xpath("parent::a").attrib["href"],
+                    author=img_elem.xpath("parent::a/following-sibling::span/text()").extract_first(),
+                )
         # go to next page
         next_link = response.xpath('//span[@class="pnow"]/following-sibling::a')
         if next_link:
