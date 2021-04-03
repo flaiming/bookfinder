@@ -27,26 +27,35 @@ class BookMerger:
             ],
         }
         """
-        deny_merge_on_fields = item.get("deny_merge_on_fields", [])
-        name = item.get("name", "").strip()
-        isbn = clean_isbn(item.get("isbn", "")).strip()
-        pages = item.get("pages", "")
+
+        def get_data(field, default=""):
+            res = item.get(field, default)
+            if res:
+                if isinstance(res, str):
+                    res = res.strip()
+                return res
+            return default
+
+        deny_merge_on_fields = get_data("deny_merge_on_fields", [])
+        name = get_data("name")
+        isbn = clean_isbn(get_data("isbn"))
+        pages = get_data("pages")
         try:
             pages = int(pages)
-        except ValueError:
+        except (TypeError, ValueError):
             pages = 0
-        language = item.get("language", "").strip()
-        year = item.get("year")
+        language = get_data("language")
+        year = get_data("year")
         try:
             year = int(year)
         except (TypeError, ValueError):
             year = None
-        issue = item.get("issue", "").strip()
+        issue = get_data("issue")
         # TODO save issue
-        cover = item.get("cover", "").strip()
-        profile_url = item.get("profile_url", "").strip()
-        prices = item.get("prices", [])
-        author = item.get("author", "").strip()
+        cover = get_data("cover")
+        profile_url = get_data("profile_url")
+        prices = get_data("prices", [])
+        author = get_data("author")
 
         result_status = None
         books = cls.find_existing_books(profile_url, name, isbn, year, deny_merge_on_fields=deny_merge_on_fields)
