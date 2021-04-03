@@ -1,7 +1,6 @@
 beautifulsoup4==4.9.3
 Django==3.1.6
 ImageHash==4.2.0
-opencv-python==4.5.1.48
 Pillow==8.1.0
 pip-tools==5.5.0
 requests==2.25.1
@@ -9,3 +8,9 @@ Scrapy==2.4.1
 isbnlib==3.10.6
 pytest==6.2.2
 pytest-django==4.1.0
+airtable_python_wrapper==0.15.2
+psycopg2-binary==2.8.6
+
+
+opencv-python==4.5.1.48
+opencv-contrib-python==4.5.1.48

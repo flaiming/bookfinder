@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+airtable_python_wrapper==0.15.2
+    # via -r requirements.in
 asgiref==3.3.1
     # via django
 attrs==20.3.0
@@ -66,9 +68,12 @@ lxml==4.6.2
 numpy==1.20.1
     # via
     #   imagehash
+    #   opencv-contrib-python
     #   opencv-python
     #   pywavelets
     #   scipy
+opencv-contrib-python==4.5.1.48
+    # via -r requirements.in
 opencv-python==4.5.1.48
     # via -r requirements.in
 packaging==20.9
@@ -87,6 +92,8 @@ pluggy==0.13.1
     # via pytest
 protego==0.1.16
     # via scrapy
+psycopg2-binary==2.8.6
+    # via -r requirements.in
 py==1.10.0
     # via pytest
 pyasn1-modules==0.2.8
@@ -116,7 +123,9 @@ pywavelets==1.1.1
 queuelib==1.5.0
     # via scrapy
 requests==2.25.1
-    # via -r requirements.in
+    # via
+    #   -r requirements.in
+    #   airtable-python-wrapper
 scipy==1.6.1
     # via imagehash
 scrapy==2.4.1
