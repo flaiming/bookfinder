@@ -1,12 +1,13 @@
 import os
-from django.db import models
 import requests
 import logging
-from django.core import files
 from io import BytesIO
 from PIL import Image
 import imagehash
-import isbnlib
+
+from django.db import models
+from django.core import files
+from matcher.utils import clean_isbn
 
 logger = logging.getLogger()
 
@@ -38,7 +39,7 @@ class Book(models.Model):
     language = models.CharField(max_length=20, blank=True)
     year = models.PositiveIntegerField(null=True, blank=True)
 
-    author = models.ForeignKey(Author, related_name="books", on_delete=models.CASCADE, null=True)
+    authors = models.ManyToManyField(Author, related_name="books")
 
     class Meta:
         ordering = ["-created"]
@@ -49,17 +50,10 @@ class Book(models.Model):
     def save(self, *args, **kwargs):
         if self.isbn:
             # validate ISBN
-            try:
-                if isbnlib.is_isbn10(self.isbn):
-                    self.isbn = isbnlib.to_isbn13(self.isbn)
-                elif isbnlib.is_isbn13(self.isbn):
-                    pass
-                else:
-                    raise isbnlib.ISBNLibException()
-                self.isbn = isbnlib.canonical(self.isbn)
-            except isbnlib.ISBNLibException:
-                logger.warning(f"ISBN iof book with PK={self.pk} is not valid! {self.isbn}")
-                self.isbn = ""
+            orig_isbn = self.isbn
+            self.isbn = clean_isbn(self.isbn)
+            if orig_isbn and not self.isbn:
+                logger.warning(f"ISBN '{orig_isbn}' book with PK={self.pk} is not valid! Removing.")
         super().save(*args, **kwargs)
 
 
@@ -68,7 +62,7 @@ class BookProfile(models.Model):
     last_updated = models.DateTimeField(auto_now_add=True)
     url = models.URLField(max_length=255, unique=True)
 
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="profiles")
+    books = models.ManyToManyField(Book, related_name="profiles")
 
     def __str__(self):
         return self.url
@@ -77,6 +71,8 @@ class BookProfile(models.Model):
 class BookPriceType(models.IntegerChoices):
     OFFER = 1
     REQUEST = 2
+    NEW = 3
+    USED = 4
 
 
 class BookPrice(models.Model):
@@ -124,6 +120,9 @@ class BookCover(models.Model):
         ordering = ["-created"]
 
     def download_image(self):
+        if self.image:
+            # do not download image if already downloaded
+            return
         resp = requests.get(self.image_url)
         if "/empty_n.jpg" in self.image_url:
             # remove default image of databazeknih

@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count
 from matcher.models import Book
+from matcher.bookmerger import BookMerger
 
 
 class Command(BaseCommand):
@@ -12,24 +13,23 @@ class Command(BaseCommand):
         total = qs.count()
 
         counter = 0
-        for book in qs.values("isbn").annotate(cnt=Count("isbn")).order_by("-cnt").filter(cnt__gt=1):
+        #for book in qs[:100]:
+        for isbn in qs.values("isbn").annotate(cnt=Count("isbn")).order_by("-cnt").filter(cnt__gt=1).values_list("isbn", flat=True):
             print()
-            print(book)
-            isbn = book["isbn"]
-            # find candidates to merge
-            books = qs.filter(isbn=isbn).order_by("created")
-
-            # merge books
-            for b in books:
-                print(b)
-                price = b.prices.first()
-                if price:
-                    print("=======", price.source)
-
-            ##################
-            # zatim neresit, dokud neprijdu na to jak si poradit s duplicitnimi ISBN
+            print(isbn)
+            for book in Book.objects.filter(isbn=isbn):
+                print(book)
+                candidates = list(BookMerger.find_existing_books(name=book.name, isbn=book.isbn, year=book.year))
+                if len(candidates) > 1:
+                    base_book = candidates[0]
+                    print(base_book)
+                    for candidate in candidates[1:]:
+                        print("---", candidate)
+                        if candidate.name == base_book.name:
+                            print("=================MERGE")
+                            BookMerger.merge_book(base_book, candidate)
 
             counter += 1
-            if counter % 1000 == 0:
+            if counter % 100 == 0:
                 print(f"{counter} of {total}")
 
