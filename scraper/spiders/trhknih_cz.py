@@ -1,5 +1,6 @@
 import scrapy
 import re
+from matcher.models import BookPriceType
 from matcher.utils import make_full_url
 from scraper.base_spider import BaseSpider
 
@@ -41,7 +42,7 @@ class TrhknihSpider(BaseSpider):
             for row in response.css("#asks .ask-main-row")[1:]:
                 orig_id = row.css(".asmaro::attr(data-ask-id)").extract_first()
                 price = int(row.css(".ask-col-price > span > span::text").extract_first(default="").replace("Kč", "").strip())
-                prices.append({"id": orig_id, "price": price, "price_type": "offer"})
+                prices.append({"id": orig_id, "price": price, "price_type": BookPriceType.OFFER})
             item = dict(
                 name=name,
                 isbn=isbn,
