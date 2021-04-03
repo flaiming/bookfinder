@@ -1,6 +1,6 @@
 import scrapy
 import re
-from scraper.utils import make_full_url
+from matcher.utils import make_full_url
 from scraper.base_spider import BaseSpider
 
 
@@ -20,7 +20,7 @@ class TrhknihSpider(BaseSpider):
         item_count = 0
         for item in response.css(".bookitem"):
             profile_url = item.css("a.item-cover::attr(href)").extract_first()
-            profile_url = make_full_url(response, profile_url)
+            profile_url = make_full_url(response.url, profile_url)
             item_count += 1
             yield response.request.replace(url=profile_url, callback=self.parse_profile)
 
@@ -35,7 +35,7 @@ class TrhknihSpider(BaseSpider):
             pages = row.xpath('//*[@id="basic-table"]/table/tr/th[text()="stran"]/following-sibling::td/text()').extract_first()
             year = row.xpath('//*[@id="basic-table"]/table/tr/th[text()="rok vydání"]/following-sibling::td/text()').extract_first()
             issue = row.xpath('//*[@id="basic-table"]/table/tr/th[text()="vydání"]/following-sibling::td/text()').extract_first()
-            cover = make_full_url(response, response.css("#issue-cover img::attr(src)").extract_first())
+            cover = make_full_url(response.url, response.css("#issue-cover img::attr(src)").extract_first())
 
             prices = []
             for row in response.css("#asks .ask-main-row")[1:]:
