@@ -153,11 +153,12 @@ class BookCover(models.Model):
 
     def save(self, *args, **kwargs):
         if self.image:
-            # make image hashes
-            img = Image.open(self.image.path)
-            hash_short = imagehash.dhash(img, 16)
-            hash_long = imagehash.dhash(img, 32)
-            self.hash_short = hash_short
-            self.hash_long = hash_long
-            img.close()
+            if os.path.exists(self.image.path):
+                # make image hashes
+                img = Image.open(self.image.path)
+                hash_short = imagehash.dhash(img, 16)
+                hash_long = imagehash.dhash(img, 32)
+                self.hash_short = hash_short
+                self.hash_long = hash_long
+                img.close()
         super().save(*args, **kwargs)
