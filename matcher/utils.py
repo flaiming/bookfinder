@@ -9,6 +9,9 @@ def clean_isbn(isbn):
         return isbnlib.to_isbn13(isbn)
     elif isbnlib.is_isbn13(isbn):
         return isbnlib.canonical(isbn)
+    # test if wrongly prefixed isbn10
+    if isbn.startswith("978"):
+        return clean_isbn(isbn[3:])
     return ""
 
 

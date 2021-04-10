@@ -10,6 +10,7 @@ from matcher.utils import clean_isbn, make_full_url
         ("978-80-00-04151-3", "9788000041513"),
         ("978-80-00-04151", ""),  # without checksum number
         ("8085844818", "9788085844818"),
+        ("9788073540835", "9788073540838"),  # wrongly prefixed "978" to isbn10
     ],
 )
 def test_clean_isbn(test_input, expected):

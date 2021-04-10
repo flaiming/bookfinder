@@ -1,6 +1,9 @@
+import logging
 from django.db import transaction
 from matcher.models import Book, BookProfile, BookCover, BookPrice, BookPriceType
 from matcher.utils import clean_isbn
+
+logger = logging.getLogger(__name__)
 
 
 class BookMerger:
