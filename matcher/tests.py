@@ -168,3 +168,15 @@ def test_create_book_prices_by_profile_url(book_potter):
     assert prices[1].price_type == BookPriceType.REQUEST
 
 
+def test_create_book_with_empty_profile_url(db):
+    data = {
+        "name": "Larry Page",
+        "year": 2010,
+        "profile_url": "",
+    }
+    book, status = BookMerger.create_if_not_exists(data)
+    assert status == BookMerger.CREATED
+    assert Book.objects.count() == 1
+    assert book.prices.count() == 0
+    assert book.profiles.count() == 0
+

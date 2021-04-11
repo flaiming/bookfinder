@@ -91,22 +91,25 @@ class BookMerger:
             )
             # TODO create author
 
-        profile = BookProfile.objects.get_or_create(url=profile_url)[0]
-        profile.books.add(book)
+        # TODO better handle book with no profile_url
 
-        if cover:
-            BookCover.objects.update_or_create(book=book, image_url=cover, defaults=dict(profile=profile))
+        if profile_url:
+            profile = BookProfile.objects.get_or_create(url=profile_url)[0]
+            profile.books.add(book)
 
-        for price in prices:
-            BookPrice.objects.update_or_create(
-                orig_id=price["id"],
-                profile=profile,
-                book=book,
-                defaults={
-                    "price": price["price"],
-                    "price_type": price["price_type"]
-                }
-            )
+            if cover:
+                BookCover.objects.update_or_create(book=book, image_url=cover, defaults=dict(profile=profile))
+
+            for price in prices:
+                BookPrice.objects.update_or_create(
+                    orig_id=price["id"],
+                    profile=profile,
+                    book=book,
+                    defaults={
+                        "price": price["price"],
+                        "price_type": price["price_type"]
+                    }
+                )
 
         return book, result_status
 
