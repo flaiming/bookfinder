@@ -37,8 +37,12 @@ cssselect==1.1.0
     # via
     #   parsel
     #   scrapy
-django==3.1.6
+django-extensions==3.1.2
     # via -r requirements.in
+django==3.1.6
+    # via
+    #   -r requirements.in
+    #   django-extensions
 hyperlink==21.0.0
     # via twisted
 idna==2.10
@@ -47,6 +51,10 @@ idna==2.10
     #   requests
 imagehash==4.2.0
     # via -r requirements.in
+importlib-metadata==3.10.0
+    # via
+    #   pluggy
+    #   pytest
 incremental==17.5.0
     # via twisted
 iniconfig==1.1.1
@@ -148,6 +156,8 @@ toml==0.10.2
     # via pytest
 twisted==21.2.0
     # via scrapy
+typing-extensions==3.7.4.3
+    # via importlib-metadata
 urllib3==1.26.3
     # via requests
 w3lib==1.22.0
@@ -155,6 +165,8 @@ w3lib==1.22.0
     #   itemloaders
     #   parsel
     #   scrapy
+zipp==3.4.1
+    # via importlib-metadata
 zope.interface==5.2.0
     # via
     #   scrapy
