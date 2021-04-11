@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Count, Avg, Q, Min, Max
 from matcher.bookmerger import BookMerger
-from matcher.models import BookCover, Book, BookPriceType
+from matcher.models import BookCover, Book, BookPriceType, BookImport
 from urllib.parse import unquote
 
 from matcher.xml_importer import XmlImporter
@@ -17,18 +17,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        #importer = XmlImporter(BookPriceType.NEW, custom_parsers={"name": lambda x: x.split(" - ")[0]})
-        #importer.import_from_url(kosmas)
+        counter = 0
+        for book_import in BookImport.objects.filter(active=True):
+            custom_parsers = {}
+            if book_import.devider_in_name:
+                custom_parsers["name"] = lambda x: x.split(f" {book_import.devider_in_name} ")[0].strip()
+            importer = XmlImporter(BookPriceType.NEW, custom_parsers=custom_parsers)
+            counter += importer.import_from_url(book_import.url)
 
-        #importer = XmlImporter(BookPriceType.USED)
-        #counter = importer.import_from_url(reknihy)
-
-        #importer = XmlImporter(BookPriceType.NEW, custom_parsers={"name": lambda x: x.split("|")[0].strip()})
-        #counter = importer.import_from_url(albatros)
-
-        importer = XmlImporter(BookPriceType.NEW, custom_parsers={
-            "url": lambda x: unquote(x.split("?url=")[1]),
-            "name": lambda x: x.split(" - ")[0],
-        })
-        counter = importer.import_from_file(dobrovsky_xml)
         print(f"Imported {counter} books.")
+

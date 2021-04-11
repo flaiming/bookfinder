@@ -1,5 +1,5 @@
 from django.contrib import admin
-from matcher.models import Book, BookCover, Author
+from matcher.models import Book, BookCover, Author, BookImport
 
 
 class BookCoverInline(admin.TabularInline):
@@ -19,3 +19,11 @@ class AuthorAdmin(admin.ModelAdmin):
 
 admin.site.register(Book, BookAdmin)
 admin.site.register(Author, AuthorAdmin)
+
+
+class BookImportAdmin(admin.ModelAdmin):
+    search_fields = ["name"]
+    list_display = ["name", "active", "price_type"]
+
+
+admin.site.register(BookImport, BookImportAdmin)

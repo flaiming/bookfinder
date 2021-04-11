@@ -7,7 +7,7 @@ import shutil
 import logging
 from typing import Optional
 import xml.etree.ElementTree as ET
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, unquote
 from matcher.bookmerger import BookMerger, BookPriceType
 from matcher.parsers import parse_price
 
@@ -28,7 +28,7 @@ class XmlImporter:
     field_mapping = {
         ("name", ("product", "productname", "name", "title")),
         ("id", ("pid", "item_id", "code", "id")),
-        ("url", ("url", "product_url", "link"), parse_profile_url),
+        ("profile_url", ("url", "product_url", "link")),
         ("price", ("sale_price", "price", "price_vat", "final_price"), parse_price),
         ("cover", ("imgurl", "imgurl_alternative", "image_url", "image", "image_link")),
         ("ean", ("ean", )),
@@ -130,10 +130,17 @@ class XmlImporter:
                                 else:
                                     data[key] = fce(elem.text) if fce else elem.text
                                 break
-                print(data)
+                # fix URL
+                url = data.get("profile_url")
+                if url and "?url=" in url:
+                    url = unquote(url.split("?url=")[1])
+                    data["profile_url"] = parse_profile_url(url)
+
                 # set ISBN from EAN if exists
                 if data.get("ean") and not data.get("isbn"):
                     data["isbn"] = data["ean"]
+
+                print(data)
                 counter += 1
                 try:
                     book, status = BookMerger.create_if_not_exists(data)

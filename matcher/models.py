@@ -162,3 +162,16 @@ class BookCover(models.Model):
                 self.hash_long = hash_long
                 img.close()
         super().save(*args, **kwargs)
+
+
+class BookImport(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(null=True, blank=True)
+    name = models.CharField(max_length=50)
+    url = models.TextField()
+    price_type = models.PositiveIntegerField(choices=BookPriceType.choices)
+    active = models.BooleanField(default=True)
+    devider_in_name = models.CharField(max_length=1, blank=True)
+
+    def __str__(self):
+        return self.name
