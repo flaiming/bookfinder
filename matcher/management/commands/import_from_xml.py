@@ -10,20 +10,24 @@ from matcher.xml_importer import XmlImporter
 class Command(BaseCommand):
     help = ""
 
-    #def add_arguments(self, parser):
-    #    parser.add_argument(
-    #        "-i", "--input", dest="input_file", type=str, help="Input CSV file",
-    #    )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--import", dest="import", type=int, help="Import ID",
+        )
 
     def handle(self, *args, **options):
+        import_id = options["import"]
+
+        qs = BookImport.objects.filter(active=True)
+        if import_id:
+            qs = qs.filter(pk=import_id)
 
         counter = 0
-        for book_import in BookImport.objects.filter(active=True):
+        for book_import in qs:
             custom_parsers = {}
             if book_import.devider_in_name:
                 custom_parsers["name"] = lambda x: x.split(f" {book_import.devider_in_name} ")[0].strip()
-            importer = XmlImporter(BookPriceType.NEW, custom_parsers=custom_parsers)
+            importer = XmlImporter(BookPriceType.NEW, custom_parsers=custom_parsers, auth_user=book_import.auth_user, auth_password=book_import.auth_password)
             counter += importer.import_from_url(book_import.url)
 
         print(f"Imported {counter} books.")
-

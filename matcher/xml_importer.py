@@ -35,9 +35,11 @@ class XmlImporter:
         ("isbn", ("gtin", "isbn")),
     }
 
-    def __init__(self, price_type: BookPriceType, custom_parsers: Optional[dict] = None) -> None:
+    def __init__(self, price_type: BookPriceType, custom_parsers: Optional[dict] = None, auth_user: Optional[str] = None, auth_password: Optional[str] = None) -> None:
         self.price_type = price_type
         self.custom_parsers = custom_parsers or {}
+        self.auth_user = auth_user
+        self.auth_password = auth_password
 
     def import_from_url(self, import_url: str) -> int:
         temp_dir = tempfile.gettempdir()
@@ -48,7 +50,10 @@ class XmlImporter:
             headers = {
                 'User-agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36',
             }
-            resp = requests.get(import_url, headers=headers, stream=True)
+            auth = None
+            if self.auth_user:
+                auth = (self.auth_user, self.auth_password)
+            resp = requests.get(import_url, headers=headers, stream=True, auth=auth)
             with open(temp_file, 'wb') as f:
                 for chunk in resp.iter_content(chunk_size=1024):
                     if chunk:  # filter out keep-alive new chunks

@@ -126,12 +126,14 @@ class BookMerger:
             if profile:
                 books = list(profile.books.all())
                 if len(books) == 1:
+                    logger.info(f"bookmerger: Merging by profile_url: {profile_url}")
                     return [books[0]]
                 elif isbn:
                     # TODO tests!!!
                     # find book by matching ISBN
                     for book in books:
                         if book.isbn == isbn:
+                            logger.info(f"bookmerger: Merging by profile_url AND matching ISBN: {isbn}, {profile_url}")
                             return [book]
 
         if not books:
@@ -144,12 +146,14 @@ class BookMerger:
 
         if len(books) == 1:
             if books[0].name.lower() == name.lower():
+                logger.info(f"bookmerger: Merging by isbn/name+year (only 1 found): {isbn}, {name}, {year}")
                 return [books[0]]
         elif len(books) > 1:
             results = []
             for book in books:
                 if book.name.lower() == name.lower():
                     results.append(book)
+            logger.info(f"bookmerger: Merging by isbn/name+year ({len(results)} found): {isbn}, {name}, {year}")
             return results
         return None
 

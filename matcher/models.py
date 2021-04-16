@@ -172,6 +172,8 @@ class BookImport(models.Model):
     price_type = models.PositiveIntegerField(choices=BookPriceType.choices)
     active = models.BooleanField(default=True)
     devider_in_name = models.CharField(max_length=1, blank=True)
+    auth_user = models.CharField(max_length=20, blank=True)
+    auth_password = models.CharField(max_length=20, blank=True)
 
     def __str__(self):
         return self.name
