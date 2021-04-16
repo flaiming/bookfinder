@@ -4,11 +4,13 @@ from matcher.models import Book, BookCover, Author, BookImport
 
 class BookCoverInline(admin.TabularInline):
     model = BookCover
+    readonly_fields = ["profile"]
     extra = 0
 
 
 class BookAdmin(admin.ModelAdmin):
     readonly_fields = ["authors"]
+    list_display = ["name", "isbn", "year", "pages"]
     search_fields = ["name"]
     inlines = [BookCoverInline]
 
