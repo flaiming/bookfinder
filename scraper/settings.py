@@ -15,7 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 os.environ['DJANGO_SETTINGS_MODULE'] = 'bookfinder.settings_local'
 
 django.setup()
-BOT_NAME = 'scraper'
+#BOT_NAME = 'scraper'
 
 SPIDER_MODULES = ['scraper.spiders']
 NEWSPIDER_MODULE = 'scraper.spiders'
