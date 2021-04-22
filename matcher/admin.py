@@ -10,6 +10,7 @@ class BookCoverInline(admin.TabularInline):
 
 class BookAdmin(admin.ModelAdmin):
     readonly_fields = ["authors"]
+    list_display = ["name", "isbn", "year", "pages"]
     search_fields = ["name"]
     inlines = [BookCoverInline]
 
