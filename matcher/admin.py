@@ -4,6 +4,7 @@ from matcher.models import Book, BookCover, Author, BookImport
 
 class BookCoverInline(admin.TabularInline):
     model = BookCover
+    readonly_fields = ["profile"]
     extra = 0
 
 
