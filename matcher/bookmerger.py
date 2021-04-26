@@ -6,6 +6,15 @@ from matcher.utils import clean_isbn
 logger = logging.getLogger(__name__)
 
 
+def match_subname(name1, name2):
+    name1 = name1.lower().strip()
+    name2 = name2.lower().strip()
+    if not name1 or not name2:
+        return False
+    # Full match or one of names is contained in other
+    return name1 == name2 or name1 in name2 or name2 in name1
+
+
 class BookMerger:
     CREATED = 1
     UPDATED = 2
@@ -66,7 +75,8 @@ class BookMerger:
             book = books[0]
             result_status = cls.UPDATED
             # update book
-            book.name = name
+            # do not update name for now
+            # book.name = name
             if isbn:
                 book.isbn = isbn
             if language:
@@ -121,7 +131,7 @@ class BookMerger:
 
         books = []
         # find by profile URL first
-        if "profile_url" not in deny_merge_on_fields:
+        if profile_url and "profile_url" not in deny_merge_on_fields:
             profile = BookProfile.objects.filter(url=profile_url).first()
             if profile:
                 books = list(profile.books.all())
@@ -145,13 +155,13 @@ class BookMerger:
                 books = list(Book.objects.filter(year=year, name__iexact=name).order_by("created"))
 
         if len(books) == 1:
-            if books[0].name.lower() == name.lower():
+            if match_subname(books[0].name, name):
                 logger.info(f"bookmerger: Merging by isbn/name+year (only 1 found): {isbn}, {name}, {year}")
                 return [books[0]]
         elif len(books) > 1:
             results = []
             for book in books:
-                if book.name.lower() == name.lower():
+                if match_subname(book.name, name):
                     results.append(book)
             logger.info(f"bookmerger: Merging by isbn/name+year ({len(results)} found): {isbn}, {name}, {year}")
             return results

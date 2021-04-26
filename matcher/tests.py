@@ -1,9 +1,7 @@
-import os
 import pytest
-import tempfile
 
 from matcher.models import Book, BookProfile, BookPrice, BookPriceType, BookCover
-from matcher.bookmerger import BookMerger
+from matcher.bookmerger import BookMerger, match_subname
 
 
 @pytest.fixture
@@ -53,7 +51,7 @@ def test_update_book_by_profile_url(book_potter):
     }
     book, status = BookMerger.create_if_not_exists(data)
     assert status == BookMerger.UPDATED
-    assert book.name == "Parry Lotter"
+    assert book.name == "Harry Potter"
     assert book.isbn == "9788088362005"
     assert book.language == "cz"
     assert book.pages == 100
@@ -73,10 +71,24 @@ def test_update_book_by_isbn_and_name(book_potter):
     }
     book, status = BookMerger.create_if_not_exists(data)
     assert status == BookMerger.UPDATED
-    assert book.name == "harry potter"
+    assert book.name == "Harry Potter"
     assert book.isbn == "9788000011615"
     assert book.pages == 100
     assert book.year == 2010
+    assert Book.objects.count() == 1
+
+
+def test_update_book_by_isbn_and_partial_name(book_potter):
+    data = {
+        "name": "harry potter and philosophers stone",
+        "isbn": "9788000011615",
+    }
+    book, status = BookMerger.create_if_not_exists(data)
+    assert status == BookMerger.UPDATED
+    assert book.name == "Harry Potter"
+    assert book.isbn == "9788000011615"
+    assert book.pages == 350
+    assert book.year == 2000
     assert Book.objects.count() == 1
 
 
@@ -88,7 +100,7 @@ def test_update_book_by_name_and_year(book_potter):
     }
     book, status = BookMerger.create_if_not_exists(data)
     assert status == BookMerger.UPDATED
-    assert book.name == "harry potter"
+    assert book.name == "Harry Potter"
     assert book.isbn == "9788000011615"
     assert book.pages == 100
     assert book.year == 2000
@@ -179,4 +191,21 @@ def test_create_book_with_empty_profile_url(db):
     assert Book.objects.count() == 1
     assert book.prices.count() == 0
     assert book.profiles.count() == 0
+
+
+@pytest.mark.parametrize(
+    "name1, name2, expected",
+    [
+        ("", "", False),
+        ("harry potter", "harry potter", True),
+        ("Harry Potter", "harry potter", True),
+        (" Harry Potter", "harry potter ", True),
+        ("Harry Potter", "harry Potter and Philosopher stone", True),
+        ("Harry Potter", "Harry Lotter", False),
+        ("foo", "Harry Lotter", False),
+        ("", "Harry Lotter", False),
+    ],
+)
+def test_match_subname(name1, name2, expected):
+    assert match_subname(name1, name2) is expected
 
