@@ -1,0 +1,17 @@
+---
+language: python
+#sudo: required
+warnings_are_errors: true
+python:
+    - 3.9
+
+install:
+    - pip install -r requirements.txt
+    - pip install coveralls
+
+script:
+    #- python setup.py lint
+    - pytest
+    - coverage run --source=bookfinder setup.py test
+after_success:
+    coveralls
