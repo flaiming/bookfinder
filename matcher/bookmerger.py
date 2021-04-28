@@ -72,11 +72,11 @@ class BookMerger:
         result_status = None
         books = cls.find_existing_books(profile_url, name, isbn, year, deny_merge_on_fields=deny_merge_on_fields)
         if books:
+            # update book
             book = books[0]
             result_status = cls.UPDATED
-            # update book
-            # do not update name for now
-            # book.name = name
+            if book.name.lower() != name.lower():
+                book.other_names.append(name)
             if isbn:
                 book.isbn = isbn
             if language:
@@ -178,12 +178,24 @@ class BookMerger:
                 book.isbn = book_to_merge.isbn
             if not book.year:
                 book.year = book_to_merge.year
+            if not book.pages:
+                book.pages = book_to_merge.pages
+            elif book_to_merge.pages and book_to_merge.pages != book.pages:
+                book.pages = max(book_to_merge.pages, book.pages)
 
             # TODO merge author
 
+            # merge names
+            if book_to_merge.name.lower() != book.name.lower():
+                other_names = set([name.lower() for name in book.other_names])
+                if book_to_merge.name.lower() not in other_names:
+                    book.other_names.append(book_to_merge.name)
+
             # merge related objects
-            for model in (BookProfile, BookCover, BookPrice):
+            for model in (BookCover, BookPrice):
                 model.objects.filter(book=book_to_merge).update(book=book)
+
+            book.profiles.add(*book_to_merge.profiles.all())
 
             book.save()
             book_to_merge.delete()

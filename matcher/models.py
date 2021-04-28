@@ -8,6 +8,7 @@ import imagehash
 from django.db import models
 from django.core import files
 from matcher.utils import clean_isbn
+from django.contrib.postgres.fields import ArrayField
 
 logger = logging.getLogger()
 
@@ -34,6 +35,7 @@ class Source(models.Model):
 class Book(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=100)
+    other_names = ArrayField(models.TextField(), blank=True, default=list)
     isbn = models.CharField(max_length=20, blank=True)
     pages = models.PositiveIntegerField(default=0)
     language = models.CharField(max_length=20, blank=True)

@@ -52,6 +52,7 @@ def test_update_book_by_profile_url(book_potter):
     book, status = BookMerger.create_if_not_exists(data)
     assert status == BookMerger.UPDATED
     assert book.name == "Harry Potter"
+    assert book.other_names == ["Parry Lotter"]
     assert book.isbn == "9788088362005"
     assert book.language == "cz"
     assert book.pages == 100
@@ -72,6 +73,7 @@ def test_update_book_by_isbn_and_name(book_potter):
     book, status = BookMerger.create_if_not_exists(data)
     assert status == BookMerger.UPDATED
     assert book.name == "Harry Potter"
+    assert book.other_names == []
     assert book.isbn == "9788000011615"
     assert book.pages == 100
     assert book.year == 2010
@@ -86,6 +88,7 @@ def test_update_book_by_isbn_and_partial_name(book_potter):
     book, status = BookMerger.create_if_not_exists(data)
     assert status == BookMerger.UPDATED
     assert book.name == "Harry Potter"
+    assert book.other_names == ["harry potter and philosophers stone"]
     assert book.isbn == "9788000011615"
     assert book.pages == 350
     assert book.year == 2000
@@ -191,6 +194,35 @@ def test_create_book_with_empty_profile_url(db):
     assert Book.objects.count() == 1
     assert book.prices.count() == 0
     assert book.profiles.count() == 0
+
+
+def test_merge_books(book_potter):
+    book_to_merge = Book.objects.create(name="Harry Potter and Philosopher stone", isbn="9788000011615", year=2000, pages=351)
+    profile = BookProfile.objects.create(url="https://example.com/harry")
+    profile.books.add(book_to_merge)
+    BookPrice.objects.create(price=100, orig_id="2", price_type=BookPriceType.USED, book=book_to_merge, profile=profile)
+
+    book = BookMerger.merge_book(book_potter, book_to_merge)
+    assert book == book_potter
+    assert book.name == "Harry Potter"
+    assert book.other_names == ["Harry Potter and Philosopher stone"]
+    assert book.isbn == "9788000011615"
+    assert book.language == "en"
+    assert book.pages == 351
+    assert book.year == 2000
+    profiles = list(book.profiles.order_by("created"))
+    assert len(profiles) == 2
+    assert profiles[0].url == "https://foo.bar/parry"
+    assert profiles[1].url == "https://example.com/harry"
+    prices = list(book.prices.order_by("created"))
+    assert len(prices) == 2
+    assert prices[0].price == 1000
+    assert prices[0].price_type == BookPriceType.OFFER
+    assert prices[0].orig_id == "123"
+    assert prices[1].price == 100
+    assert prices[1].price_type == BookPriceType.USED
+    assert prices[1].orig_id == "2"
+    assert Book.objects.count() == 1
 
 
 @pytest.mark.parametrize(

@@ -28,11 +28,13 @@ class Command(BaseCommand):
                 candidates = list(BookMerger.find_existing_books(name=book.name, isbn=book.isbn, year=book.year))
                 if len(candidates) > 1:
                     base_book = candidates[0]
-                    print(base_book)
+                    print("base book", base_book)
                     for candidate in candidates[1:]:
                         print("---", candidate)
                         if match_subname(candidate.name, base_book.name):
-                            print("=================MERGE")
+                            print(f"=================MERGE: {base_book} <-- {candidate}")
+                            print(base_book.profiles.all())
+                            print(candidate.profiles.all())
                             if save:
                                 BookMerger.merge_book(base_book, candidate)
 
