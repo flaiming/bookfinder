@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'core',
+    'matcher',
 ]
 
 MIDDLEWARE = [
