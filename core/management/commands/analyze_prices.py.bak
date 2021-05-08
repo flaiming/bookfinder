@@ -1,0 +1,22 @@
+from django.core.management.base import BaseCommand, CommandError
+from matcher.models import BookPrice, Book
+
+
+class Command(BaseCommand):
+    help = ""
+
+    def handle(self, *args, **options):
+
+        for book in Book.objects.all().prefetch_related("prices__profile")[:100]:
+            prices = {}
+            for price in book.prices.all():
+                if "reknihy.cz" in price.profile.url:
+                    prices["reknihy"] = price.price
+                else:
+                    print(price, price.price_type)
+                    prices.setdefault(price.price_type, [])
+                    prices[price.price_type].append(price.price)
+
+            from pprint import pprint
+            pprint(prices)
+

@@ -10,7 +10,7 @@ from scrapy.exceptions import IgnoreRequest
 
 from django.conf import settings
 
-from matcher.models import BookProfile
+from core.models import BookProfile
 
 logger = logging.getLogger(__name__)
 

@@ -7,8 +7,8 @@
 # useful for handling different item types with a single interface
 import logging
 
-from matcher.models import Book, Author, BookCover, BookProfile, BookPrice, BookPriceType
-from matcher.bookmerger import BookMerger
+from core.models import Book, Author, BookCover, BookProfile, BookPrice, BookPriceType
+from core.bookmerger import BookMerger
 
 logger = logging.getLogger()
 

@@ -2,7 +2,7 @@ import scrapy
 from bs4 import BeautifulSoup
 from django.db.models import Count
 
-from matcher.models import BookCover, BookPrice, BookPriceType, Source
+from core.models import BookCover, BookPrice, BookPriceType, Source
 from scraper.base_spider import BaseSpider
 
 

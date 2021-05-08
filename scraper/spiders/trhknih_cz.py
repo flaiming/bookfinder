@@ -1,7 +1,7 @@
 import scrapy
 import re
-from matcher.models import BookPriceType
-from matcher.utils import make_full_url
+from core.models import BookPriceType
+from core.utils import make_full_url
 from scraper.base_spider import BaseSpider
 
 
