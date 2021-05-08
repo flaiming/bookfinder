@@ -27,7 +27,7 @@ class Command(BaseCommand):
             custom_parsers = {}
             if book_import.devider_in_name:
                 custom_parsers["name"] = lambda x: x.split(f" {book_import.devider_in_name} ")[0].strip()
-            importer = XmlImporter(BookPriceType.NEW, custom_parsers=custom_parsers, auth_user=book_import.auth_user, auth_password=book_import.auth_password)
+            importer = XmlImporter(book_import.price_type, custom_parsers=custom_parsers, auth_user=book_import.auth_user, auth_password=book_import.auth_password)
             counter += importer.import_from_url(book_import.url)
 
         print(f"Imported {counter} books.")
