@@ -130,5 +130,6 @@ dmypy.json
 
 
 ###########################
+static-collected/
 bookfinder/settings_local.py
 reknihy/
