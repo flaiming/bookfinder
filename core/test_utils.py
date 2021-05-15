@@ -20,6 +20,8 @@ def test_clean_isbn(test_input, expected):
 @pytest.mark.parametrize(
     "url, full_url",
     [
+        (None, "https://seznam.cz/"),
+        ("", "https://seznam.cz/"),
         ("/test", "https://seznam.cz/test"),
         ("/test", "https://seznam.cz/test"),
         ("?page=1", "https://seznam.cz/?page=1"),

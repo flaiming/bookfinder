@@ -16,8 +16,8 @@ def clean_isbn(isbn):
 
 
 def make_full_url(base_url, url):
-    if url is None:
-        return ""
+    if not url:
+        url = ""
     full_url = url
     domain = "/".join(base_url.split("/")[:3])
     if url.startswith("/"):
