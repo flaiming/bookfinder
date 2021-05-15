@@ -6,9 +6,9 @@
 #
 airtable_python_wrapper==0.15.2
     # via -r requirements.in
-asgiref==3.3.1
+asgiref==3.3.4
     # via django
-attrs==20.3.0
+attrs==21.2.0
     # via
     #   automat
     #   pytest
@@ -24,11 +24,11 @@ cffi==1.14.5
     # via cryptography
 chardet==4.0.0
     # via requests
-click==7.1.2
+click==8.0.0
     # via pip-tools
 constantly==15.1.0
     # via twisted
-cryptography==3.4.6
+cryptography==3.4.7
     # via
     #   pyopenssl
     #   scrapy
@@ -51,11 +51,7 @@ idna==2.10
     #   requests
 imagehash==4.2.0
     # via -r requirements.in
-importlib-metadata==3.10.0
-    # via
-    #   pluggy
-    #   pytest
-incremental==17.5.0
+incremental==21.3.0
     # via twisted
 iniconfig==1.1.1
     # via pytest
@@ -69,11 +65,11 @@ itemloaders==1.0.4
     # via scrapy
 jmespath==0.10.0
     # via itemloaders
-lxml==4.6.2
+lxml==4.6.3
     # via
     #   parsel
     #   scrapy
-numpy==1.20.1
+numpy==1.20.3
     # via
     #   imagehash
     #   opencv-contrib-python
@@ -128,27 +124,28 @@ pytz==2021.1
     # via django
 pywavelets==1.1.1
     # via imagehash
-queuelib==1.5.0
+queuelib==1.6.1
     # via scrapy
 requests==2.25.1
     # via
     #   -r requirements.in
     #   airtable-python-wrapper
-scipy==1.6.1
+scipy==1.6.3
     # via imagehash
 scrapy==2.4.1
     # via -r requirements.in
-service-identity==18.1.0
+service-identity==21.1.0
     # via scrapy
-six==1.15.0
+six==1.16.0
     # via
     #   automat
     #   imagehash
     #   parsel
     #   protego
     #   pyopenssl
+    #   service-identity
     #   w3lib
-soupsieve==2.2
+soupsieve==2.2.1
     # via beautifulsoup4
 sqlparse==0.4.1
     # via django
@@ -156,18 +153,14 @@ toml==0.10.2
     # via pytest
 twisted==21.2.0
     # via scrapy
-typing-extensions==3.7.4.3
-    # via importlib-metadata
-urllib3==1.26.3
+urllib3==1.26.4
     # via requests
 w3lib==1.22.0
     # via
     #   itemloaders
     #   parsel
     #   scrapy
-zipp==3.4.1
-    # via importlib-metadata
-zope.interface==5.2.0
+zope.interface==5.4.0
     # via
     #   scrapy
     #   twisted
