@@ -1,10 +1,13 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.db.models import Count, Avg, Q, Min, Max
-from .bookmerger import BookMerger
-from .models import BookCover, Book, BookPriceType, BookImport
+import logging
 from urllib.parse import unquote
 
-from .xml_importer import XmlImporter
+from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Count, Avg, Q, Min, Max
+from core.bookmerger import BookMerger
+from core.models import BookCover, Book, BookPriceType, BookImport
+from core.xml_reader import XmlReader
+
+logger = logging.getLogger()
 
 
 class Command(BaseCommand):
@@ -27,7 +30,14 @@ class Command(BaseCommand):
             custom_parsers = {}
             if book_import.devider_in_name:
                 custom_parsers["name"] = lambda x: x.split(f" {book_import.devider_in_name} ")[0].strip()
-            importer = XmlImporter(book_import.price_type, custom_parsers=custom_parsers, auth_user=book_import.auth_user, auth_password=book_import.auth_password)
-            counter += importer.import_from_url(book_import.url)
+            importer = XmlReader(book_import.price_type, custom_parsers=custom_parsers, auth_user=book_import.auth_user, auth_password=book_import.auth_password)
+            for row in importer.iter_rows_data(book_import.url):
+                try:
+                    book, status = BookMerger.create_if_not_exists(row)
+                except AssertionError as e:
+                    logger.warning(f"XmlReader: AssertionError: {e}")
+                    # skip
+                    continue
+                print("UPDATED" if status == 2 else "CREATED", book)
 
         print(f"Imported {counter} books.")
