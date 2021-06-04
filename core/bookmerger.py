@@ -1,3 +1,4 @@
+import datetime
 import logging
 from django.db import transaction
 from .models import Book, BookProfile, BookCover, BookPrice, BookPriceType
@@ -104,7 +105,11 @@ class BookMerger:
         # TODO better handle book with no profile_url
 
         if profile_url:
-            profile = BookProfile.objects.get_or_create(url=profile_url)[0]
+            profile, profile_created = BookProfile.objects.get_or_create(url=profile_url)
+            if not profile_created:
+                # update last_updated
+                profile.last_updated = datetime.datetime.now()
+                profile.save(update_fields=['last_updated'])
             profile.books.add(book)
 
             if cover:
