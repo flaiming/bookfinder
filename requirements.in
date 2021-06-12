@@ -9,6 +9,7 @@ Scrapy==2.4.1
 isbnlib==3.10.6
 pytest==6.2.2
 pytest-django==4.1.0
+python-memcached==1.59
 airtable_python_wrapper==0.15.2
 psycopg2-binary==2.8.6
 
