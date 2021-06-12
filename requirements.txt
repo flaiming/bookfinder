@@ -120,6 +120,8 @@ pytest==6.2.2
     # via
     #   -r requirements.in
     #   pytest-django
+python-memcached==1.59
+    # via -r requirements.in
 pytz==2021.1
     # via django
 pywavelets==1.1.1
@@ -143,6 +145,7 @@ six==1.16.0
     #   parsel
     #   protego
     #   pyopenssl
+    #   python-memcached
     #   service-identity
     #   w3lib
 soupsieve==2.2.1
