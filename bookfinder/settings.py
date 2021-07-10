@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_extensions',
+    'rest_framework',
+    'rest_framework.authtoken',
     'core',
     'matcher',
 ]
@@ -195,3 +197,11 @@ CACHES = {
 AIRTABLE_API_KEY = ""
 
 SCRAPE_URL_AGAIN_AFTER_DAYS = 14
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
