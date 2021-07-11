@@ -10,11 +10,11 @@ from .serializers import BookSerializer
 def book_by_isbn(request):
     raw_isbn = request.GET.get("isbn")
     if not raw_isbn:
-        return JsonResponse({"detail": "No 'isbn' parameter given."})
+        return JsonResponse({"detail": "No 'isbn' parameter given."}, status=400)
 
     isbn = clean_isbn(raw_isbn)
     if not isbn:
-        return JsonResponse({"detail": f"ISBN {raw_isbn} is not valid ISBN."})
+        return JsonResponse({"detail": f"ISBN {raw_isbn} is not valid ISBN."}, status=402)
 
     book = Book.objects.filter(isbn=isbn).first()
     if book:
