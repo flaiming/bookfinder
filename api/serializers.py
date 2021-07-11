@@ -15,6 +15,7 @@ class BookSerializer(serializers.ModelSerializer):
     price_offer_max = serializers.IntegerField(read_only=True)
     price_request_max = serializers.IntegerField(read_only=True)
     price_new = serializers.IntegerField(read_only=True)
+    cover = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
