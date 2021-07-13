@@ -6,6 +6,7 @@ from PIL import Image
 import imagehash
 
 from django.db import models
+from django.db.models import Q, Max
 from django.core import files
 from .utils import clean_isbn
 from django.contrib.postgres.fields import ArrayField
@@ -32,6 +33,17 @@ class Source(models.Model):
         return self.name
 
 
+class BookManager(models.Manager):
+
+    def with_prices(self):
+        return Book.objects.annotate(
+            price_offer_max=Max("prices__price", filter=Q(prices__price_type=BookPriceType.OFFER)),
+            price_request_max=Max("prices__price", filter=Q(prices__price_type=BookPriceType.REQUEST)),
+            price_new=Max("prices__price", filter=Q(prices__price_type=BookPriceType.NEW)),
+            # TODO used_price as price from XML
+        ).prefetch_related("covers")
+
+
 class Book(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=100)
@@ -42,6 +54,8 @@ class Book(models.Model):
     year = models.PositiveIntegerField(null=True, blank=True)
 
     authors = models.ManyToManyField(Author, related_name="books")
+
+    objects = BookManager()
 
     class Meta:
         ordering = ["-created"]
