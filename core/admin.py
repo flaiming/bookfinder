@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Book, BookCover, Author, BookImport
+from .models import Book, BookCover, Author, BookImport, BookPrice
 
 
 class BookCoverInline(admin.TabularInline):
@@ -8,11 +8,18 @@ class BookCoverInline(admin.TabularInline):
     extra = 0
 
 
+class BookPriceInline(admin.TabularInline):
+    model = BookPrice
+    fields = ["id", "price_type", "price", "profile", "orig_id", "created", "updated"]
+    readonly_fields = ["profile", "book", "source", "created", "updated"]
+    extra = 0
+
+
 class BookAdmin(admin.ModelAdmin):
     readonly_fields = ["authors"]
     list_display = ["name", "isbn", "year", "pages"]
     search_fields = ["name"]
-    inlines = [BookCoverInline]
+    inlines = [BookCoverInline, BookPriceInline]
 
 
 class AuthorAdmin(admin.ModelAdmin):
