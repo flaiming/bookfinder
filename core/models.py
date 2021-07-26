@@ -61,7 +61,7 @@ class Book(models.Model):
         ordering = ["-created"]
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.id})"
 
     def save(self, *args, **kwargs):
         if self.isbn:
