@@ -9,7 +9,16 @@ class DatabazeknihSpider(BaseSpider):
     start_urls = ['https://www.databazeknih.cz/knihy']
     #download_delay = 1
 
+    custom_settings = {
+        #"SKIP_FRESH_PROFILES": False,
+    }
+
     def parse(self, response):
+
+        if self.force_profile_url:
+            yield response.request.replace(url=self.force_profile_url, callback=self.parse_profile)
+            return
+
         # parse genres
         for zanr in response.css('select[name=zanr] option'):
             if not zanr.attrib.get("selected"):

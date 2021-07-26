@@ -1,8 +1,9 @@
 import scrapy
+import datetime
 from bs4 import BeautifulSoup
 from django.db.models import Count
 
-from core.models import BookCover, BookPrice, BookPriceType, Source
+from core.models import BookCover, BookPrice, BookPriceType, Source, BookProfile
 from scraper.base_spider import BaseSpider
 
 
@@ -14,14 +15,16 @@ class DatabazeknihSpider(BaseSpider):
 
     def start_requests(self):
         self.source = Source.objects.get_or_create(name="databazeknih.cz")[0]
-        for cover in BookCover.objects.exclude(image_url="").annotate(cnt=Count("book__prices")).filter(cnt=0):
-            orig_id = cover.get_orig_id()
-            for price_type, price_type_str in ((BookPriceType.OFFER, "offer"), (BookPriceType.REQUEST, "request")):
-                url = f"https://www.databazeknih.cz/book-detail-bazar.php?type={price_type_str}&bookId={orig_id}"
-                yield scrapy.Request(url=url, meta={"book_id": cover.book_id, "price_type": price_type})
+        for profile in BookProfile.objects.filter(url__contains="databazeknih.cz/").order_by("id"):
+            orig_id = profile.url.split("-")[-1]
+            for book in profile.books.all():
+                for price_type, price_type_str in ((BookPriceType.OFFER, "offer"), (BookPriceType.REQUEST, "request")):
+                    url = f"https://www.databazeknih.cz/book-detail-bazar.php?type={price_type_str}&bookId={orig_id}"
+                    yield scrapy.Request(url=url, meta={"book": book, "price_type": price_type, "profile_url": profile.url})
 
     def parse(self, response):
         bs = BeautifulSoup(response.text, 'html.parser')
+        prices = []
         for row in bs.select("table.new tr"):
             tds = row.select("td")
             if len(tds) > 2:
@@ -31,14 +34,27 @@ class DatabazeknihSpider(BaseSpider):
                 except ValueError:
                     # ignore non-number values
                     continue
-                print(price)
                 bazar_id = tds[2].find("a")["href"].split("-")[-1]
-                print(bazar_id)
                 if price and bazar_id:
-                    BookPrice.objects.update_or_create(
-                        orig_id=bazar_id,
-                        source=self.source,
-                        book_id=response.meta["book_id"],
-                        price_type=response.meta["price_type"],
-                        defaults={"price": price}
-                    )
+                    prices.append([price, bazar_id])
+
+        print(f"{prices=}")
+
+        book = response.meta["book"]
+        profile = BookProfile.objects.get(url=response.meta["profile_url"])
+        # update last_updated
+        profile.last_updated = datetime.datetime.now()
+        profile.save(update_fields=['last_updated'])
+        profile.books.add(book)
+
+        for price, orig_id in prices:
+            BookPrice.objects.update_or_create(
+                orig_id=orig_id,
+                profile=profile,
+                book=book,
+                price_type=response.meta["price_type"],
+                defaults={
+                    "price": price,
+                    "source": self.source,
+                }
+            )
